@@ -1,47 +1,106 @@
-import { Box, TextField, Button, styled } from "@mui/material";
-import React, { MutableRefObject } from "react";
+import longUrlState from "@/atoms/longUrlState";
+import {
+  Box,
+  TextField,
+  Button,
+  styled,
+  FormControl,
+  FormHelperText,
+  CircularProgress,
+} from "@mui/material";
+import { useAtom } from "jotai";
+import React, { useState } from "react";
+import isErrorState from "@/atoms/isErrorState";
+import axios from "axios";
+import shortUrlState from "@/atoms/shortUrl";
+import { LoadingButton } from "@mui/lab";
 
-const UrlTextField = ({
-  inputRef,
-  handleClick,
-}: {
-  inputRef: MutableRefObject<null>;
-  handleClick: () => void;
-}) => {
+const FRONT_END_URL = process.env.NEXT_PUBLIC_FRONTEND_URL;
+
+const UrlTextField = () => {
+  const [longUrl, setLongUrl] = useAtom(longUrlState);
+  const [isError, setIsError] = useAtom(isErrorState);
+  const [_, setShortUrl] = useAtom(shortUrlState);
+  const [loading, setLoading] = useState(false);
+
+  const shortenUrl = async () => {
+    // @ts-ignore
+    const res = await axios.post("/api/shorten", {
+      url: longUrl,
+    });
+    const hash = res.data.data.hash;
+    const shortUrl = `${FRONT_END_URL}/${hash}`;
+    console.log(shortUrl);
+    setShortUrl(shortUrl);
+  };
+
+  const handleSubmit = async () => {
+    if (longUrl.trim() === "") {
+      setIsError(true);
+    } else {
+      setIsError(false);
+      setLoading(true);
+      await shortenUrl();
+      setLoading(false);
+    }
+  };
+
   return (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
-
+        fontSize: "2em",
         maxWidth: "70vw",
         borderRadius: "16px",
-        justifyContent: "center",
         margin: "auto",
+        // height: "100px",
+        boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
       }}
     >
-      <div style={{ display: "flex", width: "100%" }}>
-        <TextField
-          // variant="outlined"
-          placeholder="Place your long URL here..."
-          inputRef={inputRef}
-          sx={{
-            width: "100%",
-            borderRadius: 0,
-          }}
-        />
-        <Button
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+        }}
+      >
+        <FormControl error={isError} variant="outlined" sx={{ width: "100%" }}>
+          <TextField
+            placeholder="Place your long URL here..."
+            value={longUrl}
+            variant="outlined"
+            onChange={(e) => setLongUrl(e.target.value)}
+            slotProps={{
+              input: {
+                sx: {
+                  height: "4rem",
+                  borderRadius: "16px 0 0 16px",
+                  fontSize: "0.65em",
+                },
+              },
+            }}
+            sx={{
+              height: "4rem",
+            }}
+          />
+          {isError && <FormHelperText>Please enter a URL.</FormHelperText>}
+        </FormControl>
+        <LoadingButton
           variant="contained"
+          loading={loading}
           color="primary"
-          onClick={handleClick}
+          onClick={handleSubmit}
+          loadingIndicator={<CircularProgress color="secondary" size={24} />}
           sx={{
-            borderRadius: "0 16px 16px 0", // Rounded corners on the right
-            marginLeft: "-1px", // Adjust spacing between button and TextField
-            whiteSpace: "nowrap", // Prevent button text from wrapping
+            borderRadius: "0 24px 24px 0",
+            height: "4rem",
+            fontSize: "0.65em",
+
+            whiteSpace: "nowrap",
           }}
         >
           Shorten URL
-        </Button>
+        </LoadingButton>
       </div>
     </Box>
   );

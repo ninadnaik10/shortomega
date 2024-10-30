@@ -1,0 +1,43 @@
+"use client";
+import Image from "next/image";
+import styles from "./page.module.css";
+import AppTheme from "@/shared-theme/AppTheme";
+import { Box, Button, Paper, styled, TextField } from "@mui/material";
+import UrlTextField from "@/components/UrlTextField";
+import { useRef, useState } from "react";
+import axios from "axios";
+import shortUrlState from "@/atoms/shortUrl";
+import { useAtomValue } from "jotai";
+import longUrlState from "@/atoms/longUrlState";
+import React from "react";
+import { useAtom } from "jotai";
+import ShortUrlResult from "./components/ShortUrlResult";
+const StyledMainContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "50vh",
+  width: "100vw",
+  textAlign: "center",
+  fontSize: "4rem",
+  fontFamily: "Cantarell,sans-serif",
+  fontWeight: "bold",
+  // backgroundColor: "#f5f5f5",
+});
+export default function Home() {
+  const inputRef = useRef(null);
+  const [longUrl, setLongUrl] = useAtom(longUrlState);
+  const shortUrl = useAtomValue(shortUrlState);
+
+  return (
+    <>
+      <StyledMainContainer>
+        Shortomega
+        <br />
+        🔗✨
+      </StyledMainContainer>
+      {(shortUrl && <ShortUrlResult />) || <UrlTextField />}
+    </>
+  );
+}
