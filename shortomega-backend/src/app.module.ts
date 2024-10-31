@@ -9,22 +9,7 @@ import { AppRepositoryRedis } from './app.repository.redis';
 
 
 @Module({
-  imports: [ShortenerModule,
-    // CacheModule.registerAsync({
-    //   useFactory: async () => {
-    //     const store = await redisStore({
-    //       socket: {
-    //         host: 'localhost',
-    //         port: 6379,
-    //       }
-    //     })
-    //     return {
-    //       store: store as unknown as CacheStore,
-    //       ttl: 3 * 60000
-    //     }
-    //   }
-    // })
-  ],
+  imports: [ShortenerModule],
   controllers: [AppController],
   providers: [AppService,
 

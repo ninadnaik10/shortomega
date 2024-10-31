@@ -15,7 +15,7 @@ import axios from "axios";
 import shortUrlState from "@/atoms/shortUrl";
 import { LoadingButton } from "@mui/lab";
 
-const FRONT_END_URL = process.env.NEXT_PUBLIC_FRONTEND_URL;
+const FRONT_END_URL = process.env.NEXT_PUBLIC_SHORT_HOST;
 
 const UrlTextField = () => {
   const [longUrl, setLongUrl] = useAtom(longUrlState);

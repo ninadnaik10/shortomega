@@ -25,13 +25,13 @@ export class ShortenerController {
             return { error: 'Enter a valid URL', code: 'invalid_url_format' }
         }
         let hash = uuidv4().slice(0, 7);
-        console.log(hash)
+        // console.log(hash)
         console.log(await this.redisService.get(hash))
         while (await this.redisService.get(hash) !== null) {
             // console.log("first")
             hash = uuidv4().slice(0, 7);
         }
-        console.log(hash, url)
+        // console.log(hash, url)
         await this.redisService.put(hash, url)
         return ({ hash: hash });
     }
