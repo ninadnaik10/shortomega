@@ -17,6 +17,7 @@
     "@mui/styles": "^6.1.5",
     "@types/axios": "^0.14.4",
     "axios": "^1.7.7",
+    "html2canvas": "^1.4.1",
     "jotai": "^2.10.1",
     "next": "15.0.1",
     "qrcode.react": "^4.1.0",

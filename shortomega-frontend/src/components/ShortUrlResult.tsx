@@ -1,11 +1,17 @@
 import { Box, IconButton, styled } from "@mui/material";
 import { useAtomValue } from "jotai";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import shortUrlState from "@/atoms/shortUrl";
-import { QRCodeSVG } from "qrcode.react";
+import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
 import longUrlState from "@/atoms/longUrlState";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import DoneIcon from "@mui/icons-material/Done";
+import { Download } from "@mui/icons-material";
+import {
+  copyCanvasToClipboard,
+  copyText,
+  onCanvasButtonClick,
+} from "@/utils/copyAndDownloadQr";
 
 const StyledMainContainer = styled(Box)({
   display: "flex",
@@ -21,6 +27,10 @@ const StyledMainContainer = styled(Box)({
   backdropFilter: "blur(4px)",
   WebkitBackdropFilter: "blur(4px)",
   border: "1px solid rgba(255, 255, 255, 0.18)",
+  "@media (max-width: 1054px)": {
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
 });
 
 const StyledUrlContainer = styled(Box)({
@@ -32,44 +42,81 @@ const StyledUrlContainer = styled(Box)({
   overflow: "hidden",
   maxWidth: "45vw",
   textWrap: "wrap",
+  "@media (max-width: 1054px)": {
+    margin: "0 1rem 1rem 0",
+  },
+});
+
+const StyledParagraph = styled("p")({
+  margin: "1em 0",
+  "&:first-of-type": {
+    marginTop: 0,
+  },
+  fontSize: "0.85em",
 });
 
 export default function ShortUrlResult() {
   const shortUrl = useAtomValue(shortUrlState);
   const longUrl = useAtomValue(longUrlState);
-  const [toggleIcon, setToggleIcon] = useState([false, false]);
+  const [toggleIcon, setToggleIcon] = useState([false, false, false]);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const copyText = (value: string, idx: number) => {
-    // firefox does not support navigator.clipboard.writeText
-
-    navigator.clipboard.writeText(value);
-    setToggleIcon((prev) => {
-      return prev.map((_, i) => (i === idx ? !prev[i] : prev[i]));
-    });
-  };
   return (
     <div>
       <StyledMainContainer>
         {/* <StyledUrlContainer> */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          Long URL
+          <StyledParagraph>Long URL</StyledParagraph>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <StyledUrlContainer>{longUrl}</StyledUrlContainer>
-            <IconButton onClick={() => copyText(longUrl, 0)}>
+            <IconButton onClick={() => copyText(longUrl, 0, setToggleIcon)}>
               {(!toggleIcon[0] && <CopyIcon />) || <DoneIcon />}
             </IconButton>
           </Box>
-          Short URL
+          <StyledParagraph>Short URL</StyledParagraph>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <StyledUrlContainer>{shortUrl}</StyledUrlContainer>
-            <IconButton onClick={() => copyText(shortUrl, 1)}>
+            <IconButton onClick={() => copyText(shortUrl, 1, setToggleIcon)}>
               {(!toggleIcon[1] && <CopyIcon />) || <DoneIcon />}
             </IconButton>
           </Box>
         </Box>
 
         {/* </StyledUrlContainer> */}
-        <QRCodeSVG value={shortUrl} size={154} marginSize={1} radius={10} />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            margin: "auto 0",
+            justifyContent: "space-around",
+          }}
+        >
+          <QRCodeCanvas
+            value={shortUrl}
+            size={175}
+            level="M"
+            marginSize={1}
+            //@ts-ignore
+            ref={canvasRef}
+          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              margin: "1rem 0",
+              justifyContent: "space-around",
+            }}
+          >
+            <IconButton
+              onClick={() => copyCanvasToClipboard(canvasRef, setToggleIcon)}
+            >
+              {(!toggleIcon[2] && <CopyIcon />) || <DoneIcon />}
+            </IconButton>
+            <IconButton onClick={() => onCanvasButtonClick(canvasRef)}>
+              <Download />
+            </IconButton>
+          </div>
+        </div>
       </StyledMainContainer>
     </div>
   );
