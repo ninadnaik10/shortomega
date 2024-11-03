@@ -31,8 +31,8 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://backend:3000
-      - NEXT_PUBLIC_SHORT_HOST=
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_SHORT_HOST=http://localhost:3001
     depends_on:
       - backend
     networks:

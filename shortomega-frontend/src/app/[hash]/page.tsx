@@ -7,7 +7,10 @@ interface HashPageProps {
   };
 }
 
-export default async function HashRedirect({ params }: HashPageProps) {
+export default async function HashRedirect(
+  // @ts-ignore
+  { params }
+) {
   const { hash } = await params;
   const url = await getURL(hash);
   console.log(url);

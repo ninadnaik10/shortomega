@@ -3,7 +3,8 @@ import { getURL } from "@/lib/api";
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { hash: string } }
+    // @ts-ignore
+    { params }
 ) {
     try {
         const { hash } = await params;
