@@ -11,7 +11,7 @@ import { useAtomValue } from "jotai";
 import longUrlState from "@/atoms/longUrlState";
 import React from "react";
 import { useAtom } from "jotai";
-import ShortUrlResult from "./components/ShortUrlResult";
+import ShortUrlResult from "../components/ShortUrlResult";
 const StyledMainContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",

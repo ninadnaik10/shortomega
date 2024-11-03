@@ -1,6 +1,6 @@
 "use client";
 
-import Home from "@/home";
+import Home from "@/app/home";
 import AppTheme from "@/shared-theme/AppTheme";
 import { Provider } from "jotai";
 
