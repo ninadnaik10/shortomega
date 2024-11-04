@@ -56,6 +56,10 @@ const UrlTextField = () => {
         margin: "auto",
         // height: "100px",
         boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+        "@media (max-width: 1054px)": {
+          maxWidth: "90vw",
+          fontSize: "1.5em",
+        },
       }}
     >
       <div
