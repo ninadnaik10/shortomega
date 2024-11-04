@@ -33,6 +33,11 @@ A simple and modern URL shortener built with Next.js, NestJS, Redis, and Docker.
 - **Database**: Redis - High-performance key-value store for URL mappings
 - **Containerization**: Docker - Simplified deployment and development environment
 
+## Images
+
+![Homepage](./shortomega-frontend/public/screenshots/home-page.png)
+![Resultpage](./shortomega-frontend/public/screenshots/result-page.png)
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
