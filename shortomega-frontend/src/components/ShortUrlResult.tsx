@@ -1,4 +1,4 @@
-import { Box, IconButton, styled } from "@mui/material";
+import { Box, Button, IconButton, styled } from "@mui/material";
 import { useAtomValue } from "jotai";
 import React, { useRef, useState } from "react";
 import shortUrlState from "@/atoms/shortUrl";
@@ -6,7 +6,7 @@ import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
 import longUrlState from "@/atoms/longUrlState";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import DoneIcon from "@mui/icons-material/Done";
-import { Download } from "@mui/icons-material";
+import { ArrowBack, Download } from "@mui/icons-material";
 import {
   copyCanvasToClipboard,
   copyText,
@@ -55,7 +55,11 @@ const StyledParagraph = styled("p")({
   fontSize: "0.85em",
 });
 
-export default function ShortUrlResult() {
+export default function ShortUrlResult({
+  clearState,
+}: {
+  clearState: () => void;
+}) {
   const shortUrl = useAtomValue(shortUrlState);
   const longUrl = useAtomValue(longUrlState);
   const [toggleIcon, setToggleIcon] = useState([false, false, false]);
@@ -66,6 +70,18 @@ export default function ShortUrlResult() {
       <StyledMainContainer>
         {/* <StyledUrlContainer> */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Button
+            onClick={clearState}
+            sx={{
+              display: "flex",
+              alignItems: "flex",
+              fontSize: "1em",
+              margin: "0 auto 1rem 0",
+            }}
+          >
+            <ArrowBack />
+            {" Go Back"}
+          </Button>
           <StyledParagraph>Long URL</StyledParagraph>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <StyledUrlContainer>{longUrl}</StyledUrlContainer>

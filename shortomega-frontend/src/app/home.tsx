@@ -12,6 +12,7 @@ import longUrlState from "@/atoms/longUrlState";
 import React from "react";
 import { useAtom } from "jotai";
 import ShortUrlResult from "../components/ShortUrlResult";
+import isErrorState from "@/atoms/isErrorState";
 const StyledMainContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",
@@ -28,7 +29,14 @@ const StyledMainContainer = styled(Box)({
 export default function Home() {
   const inputRef = useRef(null);
   const [longUrl, setLongUrl] = useAtom(longUrlState);
-  const shortUrl = useAtomValue(shortUrlState);
+  const [shortUrl, setShortUrl] = useAtom(shortUrlState);
+  const [isError, setIsError] = useAtom(isErrorState);
+
+  const clearState = () => {
+    setShortUrl("");
+    setLongUrl("");
+    setIsError(false);
+  };
 
   return (
     <>
@@ -37,7 +45,9 @@ export default function Home() {
         <br />
         🔗✨
       </StyledMainContainer>
-      {(shortUrl && <ShortUrlResult />) || <UrlTextField />}
+      {(shortUrl && <ShortUrlResult clearState={clearState} />) || (
+        <UrlTextField />
+      )}
     </>
   );
 }

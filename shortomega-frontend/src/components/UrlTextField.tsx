@@ -4,7 +4,6 @@ import {
   TextField,
   Button,
   styled,
-  FormControl,
   FormHelperText,
   CircularProgress,
 } from "@mui/material";
@@ -14,6 +13,7 @@ import isErrorState from "@/atoms/isErrorState";
 import axios from "axios";
 import shortUrlState from "@/atoms/shortUrl";
 import { LoadingButton } from "@mui/lab";
+import { isValidUrl } from "@/utils/isValidUrl";
 
 const FRONT_END_URL = process.env.NEXT_PUBLIC_SHORT_HOST;
 
@@ -34,8 +34,9 @@ const UrlTextField = () => {
     setShortUrl(shortUrl);
   };
 
-  const handleSubmit = async () => {
-    if (longUrl.trim() === "") {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (longUrl.trim() === "" || !isValidUrl(longUrl)) {
       setIsError(true);
     } else {
       setIsError(false);
@@ -54,7 +55,6 @@ const UrlTextField = () => {
         maxWidth: "70vw",
         borderRadius: "16px",
         margin: "auto",
-        // height: "100px",
         boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
         "@media (max-width: 1054px)": {
           maxWidth: "90vw",
@@ -62,18 +62,20 @@ const UrlTextField = () => {
         },
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-        }}
-      >
-        <FormControl error={isError} variant="outlined" sx={{ width: "100%" }}>
+      <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+          }}
+        >
           <TextField
             placeholder="Place your long URL here..."
             value={longUrl}
             variant="outlined"
             onChange={(e) => setLongUrl(e.target.value)}
+            error={isError}
+            helperText={isError ? "Please enter a URL." : null}
             slotProps={{
               input: {
                 sx: {
@@ -84,28 +86,27 @@ const UrlTextField = () => {
               },
             }}
             sx={{
-              height: "4rem",
+              // height: "4rem",
+              width: "100%",
             }}
           />
-          {isError && <FormHelperText>Please enter a URL.</FormHelperText>}
-        </FormControl>
-        <LoadingButton
-          variant="contained"
-          loading={loading}
-          color="primary"
-          onClick={handleSubmit}
-          loadingIndicator={<CircularProgress color="secondary" size={24} />}
-          sx={{
-            borderRadius: "0 24px 24px 0",
-            height: "4rem",
-            fontSize: "0.65em",
-
-            whiteSpace: "nowrap",
-          }}
-        >
-          Shorten URL
-        </LoadingButton>
-      </div>
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            loading={loading}
+            color="primary"
+            loadingIndicator={<CircularProgress color="secondary" size={24} />}
+            sx={{
+              borderRadius: "0 24px 24px 0",
+              height: "4rem",
+              fontSize: "0.65em",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Shorten URL
+          </LoadingButton>
+        </div>
+      </form>
     </Box>
   );
 };
