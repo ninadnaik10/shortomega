@@ -39,4 +39,11 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
         await this.redisClient.set(hash, url);
         return await this.redisClient.get(hash);
     }
+    async hmset(hash: string, fields: Record<string, string>): Promise<string | null> {
+        await this.redisClient.hSet(hash, fields);
+        return "OK"
+    }
+    async hgetall(hash: string): Promise<string | null> {
+        return await this.redisClient.hGet(hash, 'hashed_password');
+    }
 }

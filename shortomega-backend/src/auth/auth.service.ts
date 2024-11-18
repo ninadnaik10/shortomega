@@ -1,31 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-
-export type AuthInput = {
-    username: string;
-    password: string;
-};
+import * as bcrypt from 'bcrypt';
+import { AuthInput } from './types';
 
 type SignInData = {
-    userId: number;
+    userId: string;
     username: string;
 }
 
 type AuthResult = {
     accessToken: string;
     userId: string;
-    username: string
 }
 
 @Injectable()
 export class AuthService {
     constructor(private usersService: UsersService) { }
     async validateUser(input: AuthInput): Promise<SignInData | null> {
-        const user = await this.usersService.findOne(input.username);
-        if (user && user.hashedPassword === input.password) {
+        const user = await this.usersService.findOne(input.email);
+        console.log(user)
+        if (user) {
             return {
-                userId: user.userId,
-                username: user.username,
+                userId: "1",
+                username: "ninad",
             };
         }
         return null;
@@ -39,8 +36,15 @@ export class AuthService {
         return {
             accessToken: 'fake-access',
             userId: user.userId.toString(),
-            username: user.username,
 
+        }
+    }
+
+    async register(input: AuthInput): Promise<AuthResult> {
+        const userId = await this.usersService.createUser(input);
+        return {
+            accessToken: 'fake-access',
+            userId: userId.toString(),
         }
     }
 }
