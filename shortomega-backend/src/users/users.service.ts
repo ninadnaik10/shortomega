@@ -7,9 +7,10 @@ import { UserInput } from './types';
 import { AuthInput } from 'src/auth/types';
 export type User = {
   userId: string;
-  hashedPassword: string;
+  hashedPassword?: string;
   email: string;
 };
+
 
 
 
@@ -17,7 +18,7 @@ export type User = {
 export class UsersService {
 
   constructor(private readonly redisService: AppRepositoryRedis) { }
-  async findOne(email: string): Promise<string | undefined> {
+  async findOne(email: string): Promise<User | undefined> {
     const userId = await this.redisService.get(`user:${email}`)
     console.log(userId)
     if (!userId) {
@@ -25,7 +26,10 @@ export class UsersService {
     }
     const hashed_password = await this.redisService.hgetall(`userid:${userId}`)
     console.log(hashed_password)
-    return userId
+    return {
+      userId: userId,
+      email: email
+    }
   }
 
   async createUser(input: AuthInput): Promise<string> {

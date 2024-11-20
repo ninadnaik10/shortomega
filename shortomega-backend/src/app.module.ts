@@ -7,14 +7,19 @@ import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { AppRepositoryRedis } from './app.repository.redis';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-
-
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ShortenerModule, AuthModule, UsersModule],
-  controllers: [AppController],
-  providers: [AppService,
-
+  imports: [
+    ShortenerModule,
+    AuthModule,
+    UsersModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
