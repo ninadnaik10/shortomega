@@ -22,7 +22,7 @@ const StyledMainContainer = styled(Box)({
   borderRadius: "16px",
   justifyContent: "space-between",
   margin: "auto",
-  background: "rgba( 35, 35, 35, 0.25 )",
+  // background: "rgba( 35, 35, 35, 0.25 )",
   boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
   backdropFilter: "blur(4px)",
   WebkitBackdropFilter: "blur(4px)",

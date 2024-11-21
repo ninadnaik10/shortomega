@@ -9,7 +9,6 @@ import {
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthInput } from './types';
 import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')

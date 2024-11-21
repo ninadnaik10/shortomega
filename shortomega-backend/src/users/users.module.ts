@@ -6,4 +6,4 @@ import { AppRepositoryRedis } from 'src/app.repository.redis';
   providers: [UsersService, AppRepositoryRedis],
   exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}

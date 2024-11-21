@@ -13,6 +13,7 @@ import React from "react";
 import { useAtom } from "jotai";
 import ShortUrlResult from "../components/ShortUrlResult";
 import isErrorState from "@/atoms/isErrorState";
+import ColorModeSelect from "@/shared-theme/ColorModeSelect";
 const StyledMainContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",
@@ -40,6 +41,7 @@ export default function Home() {
 
   return (
     <>
+      <ColorModeSelect sx={{ position: "fixed", top: "1rem", right: "1rem" }} />
       <StyledMainContainer>
         Shortomega
         <br />

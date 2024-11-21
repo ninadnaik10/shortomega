@@ -67,15 +67,14 @@ export default function SignUp() {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [nameError, setNameError] = useState(false);
   const [nameErrorMessage, setNameErrorMessage] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const validateInputs = () => {
-    const email = document.getElementById("email") as HTMLInputElement;
-    const password = document.getElementById("password") as HTMLInputElement;
-    const name = document.getElementById("name") as HTMLInputElement;
-
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email address.");
       isValid = false;
@@ -84,7 +83,7 @@ export default function SignUp() {
       setEmailErrorMessage("");
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 6 characters long.");
       isValid = false;
@@ -93,7 +92,7 @@ export default function SignUp() {
       setPasswordErrorMessage("");
     }
 
-    if (!name.value || name.value.length < 1) {
+    if (!name || name.length < 1) {
       setNameError(true);
       setNameErrorMessage("Name is required.");
       isValid = false;
@@ -149,6 +148,8 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Jon Snow"
                   error={nameError}
                   helperText={nameErrorMessage}
@@ -164,6 +165,8 @@ export default function SignUp() {
                   placeholder="your@email.com"
                   name="email"
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   variant="outlined"
                   error={emailError}
                   helperText={emailErrorMessage}
@@ -181,6 +184,8 @@ export default function SignUp() {
                   id="password"
                   autoComplete="new-password"
                   variant="outlined"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   error={passwordError}
                   helperText={passwordErrorMessage}
                   color={passwordError ? "error" : "primary"}
@@ -202,7 +207,7 @@ export default function SignUp() {
                 Already have an account?{" "}
                 <span>
                   <Link
-                    href="/material-ui/getting-started/templates/sign-in/"
+                    href="/sign-in/"
                     variant="body2"
                     sx={{ alignSelf: "center" }}
                   >
