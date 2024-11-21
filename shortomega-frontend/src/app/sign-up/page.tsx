@@ -105,10 +105,12 @@ export default function SignUp() {
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
+    event.preventDefault();
+
+    if (!validateInputs()) {
       return;
     }
+
     const data = new FormData(event.currentTarget);
     console.log({
       name: data.get("name"),
@@ -195,12 +197,7 @@ export default function SignUp() {
               control={<Checkbox value="allowExtraEmails" color="primary" />}
               label="I want to receive updates via email."
             /> */}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                onClick={validateInputs}
-              >
+              <Button type="submit" fullWidth variant="contained">
                 Sign up
               </Button>
               <Typography sx={{ textAlign: "center" }}>

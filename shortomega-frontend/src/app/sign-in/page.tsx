@@ -78,11 +78,17 @@ export default function SignIn() {
     setOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Prevent default form submission
+
     if (emailError || passwordError) {
-      event.preventDefault();
       return;
     }
+
+    if (!validateInputs()) {
+      return;
+    }
+
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get("email"),
@@ -208,7 +214,7 @@ export default function SignIn() {
               Don&apos;t have an account?{" "}
               <span>
                 <Link
-                  href="/signup/"
+                  href="/sign-up/"
                   variant="body2"
                   sx={{ alignSelf: "center" }}
                 >
