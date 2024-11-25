@@ -17,6 +17,7 @@ import { styled } from "@mui/material/styles";
 import AppTheme from "@/shared-theme/AppTheme";
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from "@/app/custom-icons";
 import ColorModeSelect from "@/shared-theme/ColorModeSelect";
+import useSignup from "./useSignup";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -70,6 +71,7 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { signup, isLoading, error } = useSignup();
 
   const validateInputs = () => {
     let isValid = true;
@@ -112,11 +114,13 @@ export default function SignUp() {
     }
 
     const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get("name"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
+    if (!data.get("email") || !data.get("password") || !data.get("name")) {
+      return;
+    }
+    signup({
+      email: data.get("email") as string,
+      password: data.get("password") as string,
+      name: data.get("name") as string,
     });
   };
 

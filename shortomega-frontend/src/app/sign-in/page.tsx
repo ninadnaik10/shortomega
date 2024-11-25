@@ -18,6 +18,7 @@ import { styled } from "@mui/material/styles";
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from "@/app/custom-icons";
 import AppTheme from "@/shared-theme/AppTheme";
 import ColorModeSelect from "@/shared-theme/ColorModeSelect";
+import useSignin from "./useSignin";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -69,6 +70,7 @@ export default function SignIn() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { signin, isLoading, error } = useSignin();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -90,9 +92,10 @@ export default function SignIn() {
     }
 
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+
+    signin({
+      email: data.get("email") as string,
+      password: data.get("password") as string,
     });
   };
 
