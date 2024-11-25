@@ -11,7 +11,7 @@ import {
   TextField,
 } from "@mui/material";
 import UrlTextField from "@/components/UrlTextField";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import shortUrlState from "@/atoms/shortUrl";
 import { useAtomValue } from "jotai";
@@ -72,7 +72,13 @@ export default function Home() {
     setIsError(false);
   };
 
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
 
   return (
     <>
