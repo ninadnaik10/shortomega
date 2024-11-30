@@ -34,7 +34,6 @@ const StyledMainContainer = styled(Box)({
   width: "100vw",
   textAlign: "center",
   fontSize: "4rem",
-  fontFamily: "Cantarell,sans-serif",
   fontWeight: "bold",
   // backgroundColor: "#f5f5f5",
 });
