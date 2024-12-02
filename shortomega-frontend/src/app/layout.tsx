@@ -7,10 +7,13 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://shortomega.ninadnaik.xyz";
+
 export const metadata: Metadata = {
   title: "Shortomega",
   description: "Simple URL shortener",
-  metadataBase: new URL("https://shortomega.ninadnaik.xyz"),
+  metadataBase: new URL(BASE_URL),
   openGraph: {
     title: "Shortomega",
     description: "Simple URL shortener",
