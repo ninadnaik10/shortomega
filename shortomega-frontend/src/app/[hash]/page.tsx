@@ -16,8 +16,7 @@ export default async function HashRedirect(
   console.log(url);
 
   if (!url) {
-    // Handle case where URL is not found
-    return <h1>The requested URL is invalid.</h1>; // Make sure you have a 404 page
+    return <h1>The requested URL is invalid.</h1>;
   }
 
   // Validate URL before redirecting

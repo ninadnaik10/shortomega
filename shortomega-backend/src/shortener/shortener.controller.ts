@@ -1,51 +1,54 @@
-import { Body, Controller, Get, Param, Post, Redirect, Response } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    Redirect,
+    Response,
+    UseGuards,
+    Request,
+} from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { AppRepositoryRedis } from 'src/app.repository.redis';
 import { isValidUrl } from 'src/utils';
 import { v4 as uuidv4 } from 'uuid';
-
-
+import { ShortenerService } from './shortener.service';
+import { AnonymousUserGuard } from 'src/auth/guards/anonymous-user.guard';
 interface ShortenResponse {
     hash: string;
 }
 
 interface ErrorResponse {
-    error: string,
-    code: string
+    error: string;
+    code: string;
 }
 
 @Controller('shorten')
 export class ShortenerController {
-    constructor(private readonly redisService: AppRepositoryRedis) { }
-    @Post("/")
-    async shortenLink(@Body('url') url: string): Promise<ShortenResponse | ErrorResponse> {
-        if (!url) {
-            return ({ error: 'URL is required', code: 'missing_url' });
-        }
-        else if (!isValidUrl(url)) {
-            return { error: 'Enter a valid URL', code: 'invalid_url_format' }
-        }
-        let hash = uuidv4().slice(0, 7);
-        // console.log(hash)
-        console.log(await this.redisService.get(hash))
-        while (await this.redisService.get(hash) !== null) {
-            // console.log("first")
-            hash = uuidv4().slice(0, 7);
-        }
-        // console.log(hash, url)
-        await this.redisService.put(hash, url)
-        return ({ hash: hash });
+    constructor(private readonly shortenerService: ShortenerService) {}
+
+    @UseGuards(AnonymousUserGuard)
+    @Post('/')
+    async shortenLink(
+        @Body('url') url: string,
+        @Request() req,
+    ): Promise<ShortenResponse | ErrorResponse> {
+        return this.shortenerService.shortenLink(url, req.user);
     }
-
-
-
 }
 
-@Controller("/")
-export class RedirectController {
-    constructor(private readonly redisService: AppRepositoryRedis) { }
+@Controller('/')
+export class LongUrlController {
+    constructor(private readonly shortenerService: ShortenerService) {}
 
-    @Get(":hash")
-    async redirect(@Param("hash") hash: string) {
-        return { url: await this.redisService.get(hash) }
+    @Get(':hash')
+    async redirect(@Param('hash') hash: string) {
+        const url = await this.shortenerService.getLongUrl(hash);
+        if (url) {
+            return { url };
+        } else {
+            return { error: 'URL not found' };
+        }
     }
 }

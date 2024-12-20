@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "shortomega-bruno-apis",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

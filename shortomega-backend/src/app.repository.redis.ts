@@ -1,4 +1,5 @@
-import { createClient, RedisClientType } from "redis";
+import { Injectable } from '@nestjs/common';
+import { createClient, RedisClientType } from 'redis';
 
 export interface IAppRepositoryRedis {
     get(hash: string): Promise<string | null>;
@@ -39,11 +40,28 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
         await this.redisClient.set(hash, url);
         return await this.redisClient.get(hash);
     }
-    async hmset(hash: string, fields: Record<string, string>): Promise<string | null> {
+    async hmset(
+        hash: string,
+        fields: Record<string, string>,
+    ): Promise<string | null> {
         await this.redisClient.hSet(hash, fields);
-        return "OK"
+        return 'OK';
     }
+
+    async addToSet(hash: string, url: string): Promise<string | null> {
+        await this.redisClient.sAdd(hash, url);
+        return 'OK';
+    }
+
+    async getAllUrls(hash: string): Promise<string[]> {
+        return await this.redisClient.sMembers(hash);
+    }
+
     async hgetall(hash: string): Promise<string | null> {
         return await this.redisClient.hGet(hash, 'hashed_password');
+    }
+
+    async increment(hash: string): Promise<number> {
+        return await this.redisClient.incr(hash);
     }
 }
