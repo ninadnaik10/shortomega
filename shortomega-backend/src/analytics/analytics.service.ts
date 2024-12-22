@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AppRepositoryRedis } from 'src/app.repository.redis';
+import { TotalUniqueVisitsObject } from 'src/types';
 
 @Injectable()
 export class AnalyticsService {
@@ -7,7 +8,7 @@ export class AnalyticsService {
 
     async incrementUniqueVisit(hash: string, ipAddress: string) {
         try {
-            return await this.redis.addToSet(`short:${hash}:ips`, ipAddress);
+            return await this.redis.addToHyperloglog(hash, ipAddress);
         } catch (err) {
             throw new Error(err);
         }
@@ -15,6 +16,16 @@ export class AnalyticsService {
     async incrementVisit(hash: string) {
         try {
             return await this.redis.increment(hash);
+        } catch (err) {
+            throw new Error(err);
+        }
+    }
+
+    async getTotalAndUniqueVisits(
+        shortUrls: string[],
+    ): Promise<TotalUniqueVisitsObject[]> {
+        try {
+            return this.redis.getTotalAndUniqueVisits(shortUrls);
         } catch (err) {
             throw new Error(err);
         }

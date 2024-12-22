@@ -52,8 +52,8 @@ export class LongUrlController {
         console.log(ip);
         const url = await this.shortenerService.getLongUrl(hash);
         if (url) {
-            this.analyticsService.incrementVisit(hash);
-            this.analyticsService.incrementUniqueVisit(hash, ip);
+            this.analyticsService.incrementVisit(`short:${hash}:visits`);
+            this.analyticsService.incrementUniqueVisit(`short:${hash}:ips`, ip);
             return { url };
         } else {
             return { error: 'URL not found' };

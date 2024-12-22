@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
-import { UrlMap } from './types';
+import { TotalUniqueVisitsObject, UrlMap } from './types';
 
 export interface IAppRepositoryRedis {
     get(hash: string): Promise<string | null>;
@@ -72,7 +72,7 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
     }
 
     async increment(hash: string): Promise<number> {
-        return await this.redisClient.incr(`short:${hash}:visits`);
+        return await this.redisClient.incr(hash);
     }
 
     async addToHyperloglog(hash: string, ipAddress: string): Promise<string> {
@@ -113,5 +113,44 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
             pairs.push({ shortUrl: result[i], longUrl: result[i + 1] });
         }
         return pairs;
+    }
+
+    async getTotalAndUniqueVisits(
+        shortUrls: string[],
+    ): Promise<TotalUniqueVisitsObject[]> {
+        const script = `
+            local result = {}
+            for i, shortUrl in ipairs(ARGV) do
+                local total = redis.call('GET', 'short:' .. shortUrl .. ':visits')
+                local unique = redis.call('PFCOUNT', 'short:' .. shortUrl .. ':ips')
+                
+                if total or unique then
+                    table.insert(result, shortUrl)
+                    table.insert(result, total or '0')
+                    table.insert(result, unique or '0')
+                end
+            end
+            return result
+        `;
+
+        const result = await this.redisClient.eval(script, {
+            keys: [],
+            arguments: shortUrls,
+        });
+
+        const stats: TotalUniqueVisitsObject[] = [];
+
+        for (let i = 0; Array.isArray(result) && i < result.length; i += 3) {
+            stats.push({
+                // @ts-ignore
+                shortUrl: result[i],
+                // @ts-ignore
+                totalVisits: parseInt(result[i + 1], 10),
+                // @ts-ignore
+                uniqueVisits: parseInt(result[i + 2], 10),
+            });
+        }
+
+        return stats;
     }
 }

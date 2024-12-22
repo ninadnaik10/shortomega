@@ -7,7 +7,6 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { AnalyticsController } from './analytics/analytics.controller';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { UrlsService } from './urls/urls.service';
 import { UrlsModule } from './urls/urls.module';
@@ -31,7 +30,7 @@ import { AppRepositoryRedis } from './app.repository.redis';
         ]),
         AnalyticsModule,
     ],
-    controllers: [AppController, AnalyticsController],
+    controllers: [AppController],
     providers: [
         AppService,
         {

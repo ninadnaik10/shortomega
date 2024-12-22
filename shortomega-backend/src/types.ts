@@ -13,3 +13,9 @@ export type UrlMap = {
     shortUrl: string;
     longUrl: string;
 };
+
+export type TotalUniqueVisitsObject = {
+    shortUrl: string;
+    totalVisits: number;
+    uniqueVisits: number;
+};
