@@ -8,6 +8,7 @@ import {
     Response,
     UseGuards,
     Request,
+    Ip,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AppRepositoryRedis } from 'src/app.repository.redis';
@@ -15,6 +16,7 @@ import { isValidUrl } from 'src/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { ShortenerService } from './shortener.service';
 import { AnonymousUserGuard } from 'src/auth/guards/anonymous-user.guard';
+import { AnalyticsService } from 'src/analytics/analytics.service';
 interface ShortenResponse {
     hash: string;
 }
@@ -40,12 +42,18 @@ export class ShortenerController {
 
 @Controller('/')
 export class LongUrlController {
-    constructor(private readonly shortenerService: ShortenerService) {}
+    constructor(
+        private readonly shortenerService: ShortenerService,
+        private readonly analyticsService: AnalyticsService,
+    ) {}
 
     @Get(':hash')
-    async redirect(@Param('hash') hash: string) {
+    async getUrlToRedirect(@Param('hash') hash: string, @Ip() ip) {
+        console.log(ip);
         const url = await this.shortenerService.getLongUrl(hash);
         if (url) {
+            this.analyticsService.incrementVisit(hash);
+            this.analyticsService.incrementUniqueVisit(hash, ip);
             return { url };
         } else {
             return { error: 'URL not found' };

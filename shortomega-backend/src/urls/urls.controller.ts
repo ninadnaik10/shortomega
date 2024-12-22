@@ -7,7 +7,7 @@ export class UrlsController {
     constructor(private readonly urlsService: UrlsService) {}
 
     @UseGuards(AuthGuard)
-    @Get('urls')
+    @Get('get-all-urls')
     async getUrls(@Request() req) {
         return this.urlsService.getUrls(req.user);
     }

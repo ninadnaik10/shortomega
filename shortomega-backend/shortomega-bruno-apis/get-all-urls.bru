@@ -1,0 +1,15 @@
+meta {
+  name: get-all-urls
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{host}}/urls/get-all-urls
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4MzJjZGZiOS0yZGVjLTQxYzgtODljYi1mN2UxZGFhN2ZmOTgiLCJ1c2VybmFtZSI6InRlc3QyQHRlc3QuY29tIiwiaWF0IjoxNzM0NzE5ODA1LCJleHAiOjE3MzQ4MDYyMDV9.tyeAOTwBgnbgV3LyC7Qhixg8QenuS6umjH6kpAbkYHU
+}

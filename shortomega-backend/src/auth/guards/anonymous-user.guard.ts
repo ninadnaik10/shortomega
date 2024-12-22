@@ -13,7 +13,6 @@ export class AnonymousUserGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const authorization = request.headers.authorization;
         const token = authorization?.split(' ')[1];
-        console.log(token);
         if (!token) {
             request.user = null;
             return true;

@@ -5,7 +5,17 @@ meta {
 }
 
 post {
-  url: http://localhost:3000/shorten
-  body: none
-  auth: none
+  url: http://localhost:3001/shorten
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  "url": "https://g.co"
+  }
 }
