@@ -39,7 +39,7 @@ export class AuthService {
     }
 
     async register(input: AuthInput): Promise<AuthResult> {
-        // const userId = await this.usersService.createUser(input);
+        const userId = await this.usersService.createUser(input);
         const user = await this.usersService.findOne(input.email);
         return this.signIn(user);
     }

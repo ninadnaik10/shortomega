@@ -25,10 +25,14 @@ const UrlTextField = () => {
   const [loading, setLoading] = useState(false);
 
   const shortenUrl = async () => {
-    // @ts-ignore
     const res = await axios.post(SERVER_URL + "/shorten", {
       url: longUrl,
-    });
+    },
+  {
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+  });
     const hash = res.data.hash;
     const shortUrl = `${FRONT_END_URL}/${hash}`;
     console.log(shortUrl);

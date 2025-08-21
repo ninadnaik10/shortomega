@@ -35,7 +35,7 @@ export class UsersService {
         console.log(uuid.toString());
         const hashedPassword = await bcrypt.hash(input.password, 10);
         await this.redisService.put(`user:${input.email}`, uuid.toString());
-        await this.redisService.hmset(`userid:${uuid.toString()}`, {
+        await this.redisService.hSet(`userid:${uuid.toString()}`, {
             hashedPassword,
             email: input.email,
         });

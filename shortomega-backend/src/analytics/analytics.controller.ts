@@ -3,10 +3,10 @@ import { AnalyticsService } from './analytics.service';
 
 @Controller('analytics')
 export class AnalyticsController {
-    constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(private readonly analyticsService: AnalyticsService) { }
 
-    @Post('/visits')
-    async getVisits(@Body() shortUrls: string[]) {
-        return this.analyticsService.getTotalAndUniqueVisits(shortUrls);
-    }
+  @Post('/visits')
+  async getVisits(@Body() shortUrls: string[]) {
+    return this.analyticsService.getTotalAndUniqueVisits(shortUrls);
+  }
 }

@@ -52,7 +52,7 @@ const StyledRegisterButton = styled(Button)({
   fontSize: "1rem",
 });
 
-const StyledProfileContainer = styled(Container)({
+const StyledDashboardButtonContainer = styled(Button)({
   margin: "0 1rem",
   fontSize: "1rem",
   display: "flex",
@@ -94,7 +94,7 @@ export default function Home() {
               <ArrowForward fontSize="small" />
             </Icon>
           </StyledRegisterButton>
-        )) || <StyledProfileContainer>Profile</StyledProfileContainer>}
+        )) || <StyledDashboardButtonContainer onClick={() => router.push("/dashboard")}>Dashboard</StyledDashboardButtonContainer>}
       </StyledFixedContainer>
       <StyledMainContainer>
         Shortomega

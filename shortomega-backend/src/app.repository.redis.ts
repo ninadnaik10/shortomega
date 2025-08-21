@@ -5,7 +5,7 @@ import { TotalUniqueVisitsObject, UrlMap } from './types';
 export interface IAppRepositoryRedis {
     get(hash: string): Promise<string | null>;
     put(hash: string, url: string): Promise<string | null>;
-    hmset(hash: string, fields: Record<string, string>): Promise<string | null>;
+    hSet(hash: string, fields: Record<string, string>): Promise<string | null>;
     addToSet(hash: string, url: string): Promise<string | null>;
     getManyUrls(hash: string): Promise<string[]>;
     hgetall(hash: string): Promise<string | null>;
@@ -50,7 +50,11 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
         await this.redisClient.set(hash, url);
         return await this.redisClient.get(hash);
     }
-    async hmset(
+
+    async delete(hash: string): Promise<number> {
+        return await this.redisClient.del(hash);
+    }
+    async hSet(
         hash: string,
         fields: Record<string, string>,
     ): Promise<string | null> {
@@ -107,6 +111,8 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
             arguments: [],
         });
 
+        console.log("result", result)
+
         const pairs: UrlMap[] = [];
         for (let i = 0; Array.isArray(result) && i < result.length; i += 2) {
             // @ts-ignore
@@ -132,25 +138,34 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
             end
             return result
         `;
-
-        const result = await this.redisClient.eval(script, {
+        try{ 
+            const result = await this.redisClient.eval(script, {
             keys: [],
             arguments: shortUrls,
         });
+
+         console.log("result getTotalAndUniqueVisits:", result)
 
         const stats: TotalUniqueVisitsObject[] = [];
 
         for (let i = 0; Array.isArray(result) && i < result.length; i += 3) {
             stats.push({
-                // @ts-ignore
-                shortUrl: result[i],
-                // @ts-ignore
-                totalVisits: parseInt(result[i + 1], 10),
-                // @ts-ignore
-                uniqueVisits: parseInt(result[i + 2], 10),
+                shortUrl: result[i] as string,
+
+                totalVisits: parseInt(result[i + 1] as string, 10),
+
+                uniqueVisits: parseInt(result[i + 2] as string, 10),
             });
         }
 
         return stats;
+
+        }catch(error){
+            console.log(error)
+            throw new Error(error)
+        }
+        
+
+       
     }
 }
