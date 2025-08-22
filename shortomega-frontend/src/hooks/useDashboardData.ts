@@ -42,7 +42,6 @@ export function useDashboardData() {
                 return;
             }
 
-            debugger
 
             // Extract hashes for analytics
             const hashes = urls.map(url => url.shortUrl);

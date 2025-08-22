@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getURL } from "@/lib/api";
 
 interface HashPageProps {
@@ -24,7 +24,8 @@ export default async function HashRedirect(
   console.log(validUrl);
 
   if (!validUrl.protocol.startsWith("http")) {
-    throw new Error("Invalid URL protocol");
+      notFound();
+
   }
 
   redirect(url);

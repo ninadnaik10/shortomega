@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 // import * as bcrypt from 'bcrypt';
 import { AuthInput } from 'src/types';
@@ -33,7 +33,7 @@ export class AuthService {
     async authenticate(input: AuthInput): Promise<AuthResult> {
         const user = await this.validateUser(input);
         if (!user) {
-            throw new Error('Invalid credentials');
+            throw new UnauthorizedException('Invalid credentials');
         }
         return this.signIn(user);
     }

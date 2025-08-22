@@ -1,4 +1,4 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
 import { TotalUniqueVisitsObject, UrlMap } from './types';
 
@@ -162,7 +162,7 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
 
         }catch(error){
             console.log(error)
-            throw new Error(error)
+            throw new InternalServerErrorException(error)
         }
         
 
