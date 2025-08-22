@@ -1,65 +1,186 @@
-import * as React from "react";
-// import type {} from '@mui/x-date-pickers/themeAugmentation';
-// import type {} from '@mui/x-charts/themeAugmentation';
-import type {} from "@mui/x-data-grid/themeAugmentation";
-// import type {} from '@mui/x-tree-view/themeAugmentation';
-import { alpha } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import AppNavbar from "./components/AppNavbar";
-import Header from "./components/Header";
-import MainGrid from "./components/MainGrid";
-import SideMenu from "./components/SideMenu";
-import AppTheme from "@/shared-theme/AppTheme";
+"use client";
+
+import React from "react";
 import {
-  chartsCustomizations,
-  dataGridCustomizations,
-  datePickersCustomizations,
-  treeViewCustomizations,
-} from "./theme/customizations";
+  Box,
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  CircularProgress,
+  Alert,
+  Stack,
+  Button,
+  Tab,
+  Tabs,
+  IconButton,
+} from "@mui/material";
+import {
+  Link as LinkIcon,
+  Visibility as VisibilityIcon,
+  People as PeopleIcon,
+  TrendingUp as TrendingUpIcon,
+  Refresh as RefreshIcon,
+  Dashboard as DashboardIcon,
+  TableChart as TableChartIcon,
+  BorderAllOutlined,
+  ArrowBack,
+} from "@mui/icons-material";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import AnalyticsStats from "./AnalyticsStats";
+import UrlsDataGrid from "./UrlsDataGrid";
+import { useRouter } from "next/navigation";
+import ProfileMenu from "../ProfileMenu";
+import ColorModeSelect from "@/shared-theme/ColorModeSelect";
 
-const xThemeComponents = {
-  // ...chartsCustomizations,
-  ...dataGridCustomizations,
-  // ...datePickersCustomizations,
-  // ...treeViewCustomizations,
-};
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
 
-export default function Dashboard(props: { disableCustomTheme?: boolean }) {
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
   return (
-    <AppTheme {...props} themeComponents={xThemeComponents}>
-      <CssBaseline enableColorScheme />
-      <Box sx={{ display: "flex" }}>
-        <SideMenu />
-        <AppNavbar />
-        {/* Main content */}
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`dashboard-tabpanel-${index}`}
+      aria-labelledby={`dashboard-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+export default function Dashboard() {
+  const { data, loading, error, refresh } = useDashboardData();
+  const [tabValue, setTabValue] = React.useState(0);
+  const [mounted, setMounted] = React.useState(false);
+
+  const router = useRouter();
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box
-          component="main"
-          sx={(theme) => ({
-            flexGrow: 1,
-            // @ts-ignore
-            backgroundColor: theme.vars
-              ? // @ts-ignore
-                `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
-              : alpha(theme.palette.background.default, 1),
-            overflow: "auto",
-          })}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="50vh"
         >
-          <Stack
-            spacing={2}
-            sx={{
-              alignItems: "center",
-              mx: 3,
-              pb: 5,
-              mt: { xs: 8, md: 0 },
-            }}
-          >
-            <Header />
-            <MainGrid />
+          <Stack alignItems="center" spacing={2}>
+            <CircularProgress size={48} />
+            <Typography>Loading dashboard...</Typography>
           </Stack>
         </Box>
-      </Box>
-    </AppTheme>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Alert
+          severity="error"
+          action={
+            <Button color="inherit" size="small" onClick={refresh}>
+              Retry
+            </Button>
+          }
+        >
+          {error}
+        </Alert>
+      </Container>
+    );
+  }
+
+  return (
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Stack spacing={4}>
+        {/* Header */}
+        <Box display="flex" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            flex={1}
+          >
+            <IconButton
+              onClick={() => router.push("/")}
+              sx={{ marginRight: "10px" }}
+            >
+              <ArrowBack />
+            </IconButton>
+            <Box flex={1}>
+              <Typography variant="h4" fontWeight="bold">
+                Analytics Dashboard
+              </Typography>
+            </Box>
+            <IconButton
+              onClick={refresh}
+              disabled={loading}
+              sx={{
+                margin: "10px",
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
+          </Box>
+          <ColorModeSelect sx={{ marginRight: "10px" }} />
+          <ProfileMenu />
+        </Box>
+
+        {/* Analytics Stats */}
+        <AnalyticsStats
+          totalUrls={data.totalUrls}
+          totalClicks={data.totalClicks}
+          totalUniqueVisits={data.totalUniqueVisits}
+          loading={loading}
+        />
+
+        {/* Navigation Tabs */}
+        {/* <Card> */}
+        {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs 
+              value={tabValue} 
+              onChange={handleTabChange} 
+              aria-label="dashboard tabs"
+              sx={{ px: 3, pt: 2 }}
+            >
+              <Tab 
+                icon={<DashboardIcon />} 
+                label="Overview" 
+                iconPosition="start"
+              />
+              
+            </Tabs>
+          </Box> */}
+
+        {/* Detailed View Tab */}
+        <TabPanel value={tabValue} index={0}>
+          <Box sx={{ height: 600 }}>
+            <UrlsDataGrid urls={data.urls} loading={loading} />
+          </Box>
+        </TabPanel>
+        {/* </Card> */}
+      </Stack>
+    </Container>
   );
 }

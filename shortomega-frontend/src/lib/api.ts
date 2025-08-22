@@ -36,7 +36,7 @@ export interface ShortUrl {
 export interface AnalyticsData {
     totalVisits: number;
     uniqueVisits: number;
-    hash: string;
+    shortUrl: string;
 }
 
 export interface UserInfo {
@@ -81,9 +81,9 @@ export async function getAllUrls(): Promise<ShortUrl[]> {
     }
 }
 
-export async function getAnalytics(hashes: string[]): Promise<{ [hash: string]: AnalyticsData }> {
+export async function getAnalytics(hashes: string[]): Promise<Array<AnalyticsData>> {
     try {
-        const response = await axios.post<{ [hash: string]: AnalyticsData }>(
+        const response = await axios.post(
             `${SERVER_URL}/analytics/visits`,
             hashes,
             createAuthenticatedRequest()
@@ -95,7 +95,7 @@ export async function getAnalytics(hashes: string[]): Promise<{ [hash: string]: 
         } else {
             console.error('Unexpected error:', error);
         }
-        return {};
+        return [];
     }
 }
 

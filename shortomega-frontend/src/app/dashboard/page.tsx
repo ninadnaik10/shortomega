@@ -1,6 +1,24 @@
-import AdvancedDashboard from "@/components/dashboard/AdvancedDashboard";
-import React from "react";
+'use client';
+
+import Dashboard from "@/components/dashboard/Dashboard";
+import AppTheme from "@/shared-theme/AppTheme";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
-  return <AdvancedDashboard />;
+  const router = useRouter();
+
+  useEffect(() => {
+    // Replace this check with your actual authentication check
+    const isAuthenticated = localStorage.getItem('token'); // or any other auth check
+
+    if (!isAuthenticated) {
+      router.push('/signin'); // Replace with your sign-in route
+    }
+  }, [router]);
+
+  return <>
+  <AppTheme>
+  <Dashboard />
+  </AppTheme></>;
 }

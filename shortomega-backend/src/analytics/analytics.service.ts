@@ -47,7 +47,15 @@ export class AnalyticsService {
     }
 
     async fetchCountryByIpAddress(ipAddress: string): Promise<string> {
+        
         try {
+            if(ipAddress === "::1"){
+            await this.redis.put(
+                `location:${ipAddress}`,
+                JSON.stringify("localhost"),
+            );
+            return "localhost"
+        }
             const cachedLocation = await this.redis.get(`location:${ipAddress}`);
             if (cachedLocation) {
                 return cachedLocation;

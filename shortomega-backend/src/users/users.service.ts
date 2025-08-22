@@ -7,25 +7,29 @@ export type User = {
     userId: string;
     hashedPassword?: string;
     email: string;
+    name: string;
 };
 
 @Injectable()
 export class UsersService {
     constructor(private readonly redisService: AppRepositoryRedis) {}
-    async findOne(email: string): Promise<User | undefined> {
-        const userId = await this.redisService.get(`user:${email}`);
-        console.log(userId);
-        if (!userId) {
+
+    async findOneByUserId(userId: string): Promise<User | undefined> {
+        const user = await this.redisService.hgetall(`userid:${userId}`);
+        console.log(user);
+        if (!user) {
             return undefined;
         }
-        const hashed_password = await this.redisService.hgetall(
-            `userid:${userId}`,
-        );
-        console.log(hashed_password);
         return {
             userId: userId,
-            email: email,
+            email: user.email,
+            name: user.name,
         };
+    }
+    async findOne(email: string): Promise<User | undefined> {
+        const userId = await this.redisService.get(`user:${email}`);
+        // findOneByUserId
+        return this.findOneByUserId(userId);
     }
 
     async createUser(input: AuthInput): Promise<string> {

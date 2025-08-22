@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import useGetUser from "./useGetUser";
 
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -16,6 +17,7 @@ export default function useSignin() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { getUser } = useGetUser();
   const signin = async (data: { email: string; password: string }) => {
     setIsLoading(true);
     setError(null);
@@ -29,6 +31,8 @@ export default function useSignin() {
       console.log(response);
 
       localStorage.setItem("token", response.data.accessToken);
+
+      await getUser();
 
       router.push("/");
     } catch (err) {

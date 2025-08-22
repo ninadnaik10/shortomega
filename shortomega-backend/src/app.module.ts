@@ -22,21 +22,21 @@ import { AppRepositoryRedis } from './app.repository.redis';
             isGlobal: true,
             envFilePath: '.env',
         }),
-        ThrottlerModule.forRoot([
-            {
-                ttl: 60000,
-                limit: 10,
-            },
-        ]),
+        // ThrottlerModule.forRoot([
+        //     {
+        //         ttl: 60000,
+        //         limit: 10,
+        //     },
+        // ]),
         AnalyticsModule,
     ],
     controllers: [AppController],
     providers: [
         AppService,
-        {
-            provide: APP_GUARD,
-            useClass: ThrottlerGuard,
-        },
+        // {
+        //     provide: APP_GUARD,
+        //     useClass: ThrottlerGuard,
+        // },
         UrlsService,
         AppRepositoryRedis,
     ],

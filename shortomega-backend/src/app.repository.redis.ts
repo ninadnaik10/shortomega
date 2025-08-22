@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
+import {
+    Injectable,
+    InternalServerErrorException,
+    Scope,
+} from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
 import { TotalUniqueVisitsObject, UrlMap } from './types';
 
@@ -8,7 +12,7 @@ export interface IAppRepositoryRedis {
     hSet(hash: string, fields: Record<string, string>): Promise<string | null>;
     addToSet(hash: string, url: string): Promise<string | null>;
     getManyUrls(hash: string): Promise<string[]>;
-    hgetall(hash: string): Promise<string | null>;
+    hgetall(hash: string): Promise<Record<string, string> | null>;
     increment(hash: string): Promise<number>;
     addToHyperloglog(hash: string, ipAddress: string): Promise<string>;
     countFromHyperloglog(hash: string): Promise<number>;
@@ -71,8 +75,8 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
         return await this.redisClient.sMembers(hash);
     }
 
-    async hgetall(hash: string): Promise<string | null> {
-        return await this.redisClient.hGet(hash, 'hashed_password');
+    async hgetall(hash: string): Promise<Record<string, string> | null> {
+        return await this.redisClient.hGetAll(hash);
     }
 
     async increment(hash: string): Promise<number> {
@@ -111,7 +115,7 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
             arguments: [],
         });
 
-        console.log("result", result)
+        console.log('result', result);
 
         const pairs: UrlMap[] = [];
         for (let i = 0; Array.isArray(result) && i < result.length; i += 2) {
@@ -138,34 +142,34 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
             end
             return result
         `;
-        try{ 
+        try {
             const result = await this.redisClient.eval(script, {
-            keys: [],
-            arguments: shortUrls,
-        });
-
-         console.log("result getTotalAndUniqueVisits:", result)
-
-        const stats: TotalUniqueVisitsObject[] = [];
-
-        for (let i = 0; Array.isArray(result) && i < result.length; i += 3) {
-            stats.push({
-                shortUrl: result[i] as string,
-
-                totalVisits: parseInt(result[i + 1] as string, 10),
-
-                uniqueVisits: parseInt(result[i + 2] as string, 10),
+                keys: [],
+                arguments: shortUrls,
             });
+
+            console.log('result getTotalAndUniqueVisits:', result);
+
+            const stats: TotalUniqueVisitsObject[] = [];
+
+            for (
+                let i = 0;
+                Array.isArray(result) && i < result.length;
+                i += 3
+            ) {
+                stats.push({
+                    shortUrl: result[i] as string,
+
+                    totalVisits: parseInt(result[i + 1] as string, 10),
+
+                    uniqueVisits: parseInt(result[i + 2] as string, 10),
+                });
+            }
+
+            return stats;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException(error);
         }
-
-        return stats;
-
-        }catch(error){
-            console.log(error)
-            throw new InternalServerErrorException(error)
-        }
-        
-
-       
     }
 }
