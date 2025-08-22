@@ -1,10 +1,10 @@
-import { NextRequest } from "next/server";
-import { getURL } from "@/lib/api";
+import { NextRequest } from 'next/server';
+import { getURL } from '@/lib/api';
 
 export async function GET(
     request: NextRequest,
     // @ts-ignore
-    { params }
+    { params },
 ) {
     try {
         const { hash } = await params;

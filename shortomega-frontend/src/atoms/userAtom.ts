@@ -1,7 +1,7 @@
-import { atom } from "jotai";
+import { atom } from 'jotai';
 
 const userAtom = atom({
-    name: "",
-    email: ""
-})
+    name: '',
+    email: '',
+});
 export default userAtom;

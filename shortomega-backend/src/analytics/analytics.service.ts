@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import { AppRepositoryRedis } from 'src/app.repository.redis';
 import { TotalUniqueVisitsObject } from 'src/types';
 import axios from 'axios';
@@ -12,7 +16,9 @@ export class AnalyticsService {
             await this.visitsByLocation(hash, ipAddress);
             return await this.redis.addToHyperloglog(hash, ipAddress);
         } catch (err) {
-            throw new InternalServerErrorException('Failed to increment unique visit');
+            throw new InternalServerErrorException(
+                'Failed to increment unique visit',
+            );
         }
     }
 
@@ -20,7 +26,9 @@ export class AnalyticsService {
         try {
             return await this.redis.increment(hash);
         } catch (err) {
-            throw new InternalServerErrorException('Failed to increment visit count');
+            throw new InternalServerErrorException(
+                'Failed to increment visit count',
+            );
         }
     }
 
@@ -30,7 +38,9 @@ export class AnalyticsService {
         try {
             return this.redis.getTotalAndUniqueVisits(shortUrls);
         } catch (err) {
-            throw new InternalServerErrorException('Failed to fetch visit statistics');
+            throw new InternalServerErrorException(
+                'Failed to fetch visit statistics',
+            );
         }
     }
 
@@ -42,27 +52,33 @@ export class AnalyticsService {
             if (err instanceof BadRequestException) {
                 throw err;
             }
-            throw new InternalServerErrorException('Failed to record visit location');
+            throw new InternalServerErrorException(
+                'Failed to record visit location',
+            );
         }
     }
 
     async fetchCountryByIpAddress(ipAddress: string): Promise<string> {
-        
         try {
-            if(ipAddress === "::1"){
-            await this.redis.put(
+            if (ipAddress === '::1') {
+                await this.redis.put(
+                    `location:${ipAddress}`,
+                    JSON.stringify('localhost'),
+                );
+                return 'localhost';
+            }
+            const cachedLocation = await this.redis.get(
                 `location:${ipAddress}`,
-                JSON.stringify("localhost"),
             );
-            return "localhost"
-        }
-            const cachedLocation = await this.redis.get(`location:${ipAddress}`);
             if (cachedLocation) {
                 return cachedLocation;
             }
 
             const remainingRequests = await this.redis.get(`ip-api:X-Rl`);
-            if (remainingRequests !== null && parseInt(remainingRequests) <= 0) {
+            if (
+                remainingRequests !== null &&
+                parseInt(remainingRequests) <= 0
+            ) {
                 const ttl = await this.redis.get(`ip-api:X-Ttl`);
                 if (ttl) {
                     await new Promise((resolve) =>
@@ -87,13 +103,12 @@ export class AnalyticsService {
                 await this.redis.put('ip-api:X-Ttl', ttl);
             }
 
-            await this.redis.put(
-                `location:${ipAddress}`,
-                JSON.stringify(data),
-            );
+            await this.redis.put(`location:${ipAddress}`, JSON.stringify(data));
 
             if (!data?.country) {
-                throw new BadRequestException('Unable to determine country from IP');
+                throw new BadRequestException(
+                    'Unable to determine country from IP',
+                );
             }
 
             return data.country;

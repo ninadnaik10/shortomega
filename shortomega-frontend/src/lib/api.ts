@@ -1,7 +1,8 @@
-import axios from "axios";
+import axios from 'axios';
 
-const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
-console.log("SERVER_URL", SERVER_URL);
+const SERVER_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
+console.log('SERVER_URL', SERVER_URL);
 
 // Get auth token from localStorage
 const getAuthToken = (): string | null => {
@@ -16,8 +17,8 @@ const createAuthenticatedRequest = () => {
     const token = getAuthToken();
     return {
         headers: {
-            ...(token && { Authorization: `Bearer ${token}` })
-        }
+            ...(token && { Authorization: `Bearer ${token}` }),
+        },
     };
 };
 
@@ -56,7 +57,10 @@ export async function getURL(hash: string): Promise<string | null> {
         return response.data.url;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.error('Axios error:', error.response?.data || error.message);
+            console.error(
+                'Axios error:',
+                error.response?.data || error.message,
+            );
         } else {
             console.error('Unexpected error:', error);
         }
@@ -68,12 +72,15 @@ export async function getAllUrls(): Promise<ShortUrl[]> {
     try {
         const response = await axios.get<ShortUrl[]>(
             `${SERVER_URL}/urls/get-all-urls`,
-            createAuthenticatedRequest()
+            createAuthenticatedRequest(),
         );
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.error('Error fetching URLs:', error.response?.data || error.message);
+            console.error(
+                'Error fetching URLs:',
+                error.response?.data || error.message,
+            );
         } else {
             console.error('Unexpected error:', error);
         }
@@ -81,17 +88,22 @@ export async function getAllUrls(): Promise<ShortUrl[]> {
     }
 }
 
-export async function getAnalytics(hashes: string[]): Promise<Array<AnalyticsData>> {
+export async function getAnalytics(
+    hashes: string[],
+): Promise<Array<AnalyticsData>> {
     try {
         const response = await axios.post(
             `${SERVER_URL}/analytics/visits`,
             hashes,
-            createAuthenticatedRequest()
+            createAuthenticatedRequest(),
         );
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.error('Error fetching analytics:', error.response?.data || error.message);
+            console.error(
+                'Error fetching analytics:',
+                error.response?.data || error.message,
+            );
         } else {
             console.error('Unexpected error:', error);
         }
@@ -103,12 +115,15 @@ export async function getUserInfo(): Promise<UserInfo | null> {
     try {
         const response = await axios.get<UserInfo>(
             `${SERVER_URL}/auth/me`,
-            createAuthenticatedRequest()
+            createAuthenticatedRequest(),
         );
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.error('Error fetching user info:', error.response?.data || error.message);
+            console.error(
+                'Error fetching user info:',
+                error.response?.data || error.message,
+            );
         } else {
             console.error('Unexpected error:', error);
         }
