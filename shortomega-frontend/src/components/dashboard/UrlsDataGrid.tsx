@@ -17,7 +17,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import { DashboardUrl } from "@/hooks/useDashboardData";
 
 interface UrlsDataGridProps {
-  urls: any[]; // Use any[] to handle flexible data structures
+  urls: any[];
   loading?: boolean;
 }
 
@@ -29,7 +29,6 @@ export default function UrlsDataGrid({
     const shortUrl = `${window.location.origin}/${hash}`;
     try {
       await navigator.clipboard.writeText(shortUrl);
-      // You might want to show a toast notification here
       console.log("URL copied to clipboard");
     } catch (err) {
       console.error("Failed to copy URL:", err);
@@ -126,10 +125,10 @@ export default function UrlsDataGrid({
     },
   ];
 
-  // Add id field for DataGrid and normalize data structure
   const rowsWithId = urls.map((url, index) => {
-    const hash = url.hash || url.shortUrl || `url-${index}`;
-    const originalUrl = url.originalUrl || url.longUrl || "";
+    const hash = url.shortUrl ;
+    console.log(url)
+    const originalUrl = url.longUrl;
 
     return {
       ...url,

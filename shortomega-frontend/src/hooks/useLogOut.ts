@@ -12,16 +12,13 @@ export default function useLogOut() {
         setIsLoading(true);
 
         try {
-            // Remove token from localStorage
             localStorage.removeItem('token');
 
-            // Clear user state
             setUser({
                 name: '',
                 email: '',
             });
 
-            // Redirect to login or home page
             router.push('/');
         } catch (err) {
             console.error('Logout error:', err);

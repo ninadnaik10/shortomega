@@ -19,7 +19,6 @@ export default async function HashRedirect(
     return <h1>The requested URL is invalid.</h1>;
   }
 
-  // Validate URL before redirecting
   const validUrl = new URL(url);
   console.log(validUrl);
 

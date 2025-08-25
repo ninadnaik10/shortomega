@@ -32,15 +32,12 @@ export default function ProfileMenu() {
 
   return (
     <>
-      {/* Small Profile Icon Button */}
       <Avatar
         alt="Profile"
-        // src="https://mui.com/static/images/avatar/1.jpg"
         sx={{ width: 40, height: 40, cursor: "pointer" }}
         onClick={handleClick}
       />
 
-      {/* Menu with Profile Card */}
       <Menu
         anchorEl={anchorEl}
         open={open}
@@ -54,7 +51,6 @@ export default function ProfileMenu() {
           <CardContent sx={{ textAlign: "center" }}>
             <Avatar
               alt="Profile Picture"
-              // src="https://mui.com/static/images/avatar/1.jpg"
               sx={{ width: 70, height: 70, mx: "auto", mb: 2 }}
             />
             <Typography variant="h6">{user.name}</Typography>

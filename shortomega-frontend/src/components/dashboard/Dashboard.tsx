@@ -5,27 +5,15 @@ import {
   Box,
   Container,
   Typography,
-  Card,
-  CardContent,
-  Grid,
   CircularProgress,
   Alert,
   Stack,
   Button,
-  Tab,
-  Tabs,
   IconButton,
 } from "@mui/material";
 import {
-  Link as LinkIcon,
-  Visibility as VisibilityIcon,
-  People as PeopleIcon,
-  TrendingUp as TrendingUpIcon,
-  Refresh as RefreshIcon,
-  Dashboard as DashboardIcon,
-  TableChart as TableChartIcon,
-  BorderAllOutlined,
   ArrowBack,
+  Refresh as RefreshIcon
 } from "@mui/icons-material";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import AnalyticsStats from "./AnalyticsStats";
@@ -36,22 +24,17 @@ import ColorModeSelect from "@/shared-theme/ColorModeSelect";
 
 interface TabPanelProps {
   children?: React.ReactNode;
-  index: number;
-  value: number;
 }
 
 function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+  const { children, ...other } = props;
 
   return (
     <div
       role="tabpanel"
-      hidden={value !== index}
-      id={`dashboard-tabpanel-${index}`}
-      aria-labelledby={`dashboard-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+       <Box sx={{ py: 3 }}>{children}</Box>
     </div>
   );
 }
@@ -67,11 +50,7 @@ export default function Dashboard() {
     setMounted(true);
   }, []);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
 
-  // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
     return null;
   }
@@ -147,34 +126,13 @@ export default function Dashboard() {
           <ProfileMenu />
         </Box>
 
-        {/* Analytics Stats */}
         <AnalyticsStats
           totalUrls={data.totalUrls}
           totalClicks={data.totalClicks}
           totalUniqueVisits={data.totalUniqueVisits}
           loading={loading}
         />
-
-        {/* Navigation Tabs */}
-        {/* <Card> */}
-        {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs 
-              value={tabValue} 
-              onChange={handleTabChange} 
-              aria-label="dashboard tabs"
-              sx={{ px: 3, pt: 2 }}
-            >
-              <Tab 
-                icon={<DashboardIcon />} 
-                label="Overview" 
-                iconPosition="start"
-              />
-              
-            </Tabs>
-          </Box> */}
-
-        {/* Detailed View Tab */}
-        <TabPanel value={tabValue} index={0}>
+        <TabPanel>
           <Box sx={{ height: 600 }}>
             <UrlsDataGrid urls={data.urls} loading={loading} />
           </Box>

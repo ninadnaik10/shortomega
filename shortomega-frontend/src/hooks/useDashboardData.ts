@@ -50,16 +50,13 @@ export function useDashboardData() {
                 return;
             }
 
-            // Extract hashes for analytics
             const hashes = urls.map((url) => url.shortUrl);
 
-            // Fetch analytics if we have URLs
             let analyticsData: Array<AnalyticsData> = [];
             if (hashes.length > 0) {
                 analyticsData = await getAnalytics(hashes);
             }
 
-            // Combine URLs with analytics
             const urlsWithAnalytics: DashboardUrl[] = urls.map((url) => ({
                 ...url,
                 analytics: analyticsData.find(
@@ -67,7 +64,6 @@ export function useDashboardData() {
                 ),
             }));
 
-            // Calculate totals
             const totalUrls = urls.length;
             const totalClicks = Object.values(analyticsData).reduce(
                 (sum, analytics) => sum + (analytics?.totalVisits || 0),
