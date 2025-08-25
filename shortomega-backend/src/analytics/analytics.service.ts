@@ -60,7 +60,7 @@ export class AnalyticsService {
 
     async fetchCountryByIpAddress(ipAddress: string): Promise<string> {
         try {
-            if (ipAddress === '::1') {
+            if (ipAddress === '::1' || ipAddress === '127.0.0.1' || ipAddress.startsWith('::ffff:127.') || ipAddress === 'localhost') {
                 await this.redis.put(
                     `location:${ipAddress}`,
                     JSON.stringify('localhost'),
