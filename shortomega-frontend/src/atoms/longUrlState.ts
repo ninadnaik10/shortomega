@@ -1,5 +1,5 @@
-import { atom } from "jotai";
+import { atom } from 'jotai';
 
-const longUrlState = atom("")
+const longUrlState = atom('');
 
 export default longUrlState;

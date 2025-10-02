@@ -1,10 +1,25 @@
-import { createClient, RedisClientType } from "redis";
+import {
+    Injectable,
+    InternalServerErrorException,
+    Scope,
+} from '@nestjs/common';
+import { createClient, RedisClientType } from 'redis';
+import { TotalUniqueVisitsObject, UrlMap } from './types';
 
 export interface IAppRepositoryRedis {
     get(hash: string): Promise<string | null>;
     put(hash: string, url: string): Promise<string | null>;
+    hSet(hash: string, fields: Record<string, string>): Promise<string | null>;
+    addToSet(hash: string, url: string): Promise<string | null>;
+    getManyUrls(hash: string): Promise<string[]>;
+    hgetall(hash: string): Promise<Record<string, string> | null>;
+    increment(hash: string): Promise<number>;
+    addToHyperloglog(hash: string, ipAddress: string): Promise<string>;
+    countFromHyperloglog(hash: string): Promise<number>;
+    getManyLongUrls(hash: string): Promise<UrlMap[]>;
 }
 
+@Injectable({ scope: Scope.DEFAULT })
 export class AppRepositoryRedis implements IAppRepositoryRedis {
     private readonly redisClient: RedisClientType;
 
@@ -39,11 +54,122 @@ export class AppRepositoryRedis implements IAppRepositoryRedis {
         await this.redisClient.set(hash, url);
         return await this.redisClient.get(hash);
     }
-    async hmset(hash: string, fields: Record<string, string>): Promise<string | null> {
-        await this.redisClient.hSet(hash, fields);
-        return "OK"
+
+    async delete(hash: string): Promise<number> {
+        return await this.redisClient.del(hash);
     }
-    async hgetall(hash: string): Promise<string | null> {
-        return await this.redisClient.hGet(hash, 'hashed_password');
+    async hSet(
+        hash: string,
+        fields: Record<string, string>,
+    ): Promise<string | null> {
+        await this.redisClient.hSet(hash, fields);
+        return 'OK';
+    }
+
+    async addToSet(hash: string, data: string): Promise<string | null> {
+        await this.redisClient.sAdd(hash, data);
+        return 'OK';
+    }
+
+    async getManyUrls(hash: string): Promise<string[]> {
+        return await this.redisClient.sMembers(hash);
+    }
+
+    async hgetall(hash: string): Promise<Record<string, string> | null> {
+        return await this.redisClient.hGetAll(hash);
+    }
+
+    async increment(hash: string): Promise<number> {
+        return await this.redisClient.incr(hash);
+    }
+
+    async addToHyperloglog(hash: string, ipAddress: string): Promise<string> {
+        // try {
+        await this.redisClient.pfAdd(hash, ipAddress);
+        return 'OK';
+        // } catch (e) {
+        //     throw new Error(e);
+        // }
+    }
+
+    async countFromHyperloglog(hash: string): Promise<number> {
+        return await this.redisClient.pfCount(hash);
+    }
+
+    async getManyLongUrls(hash: string): Promise<UrlMap[]> {
+        const script = `
+            local urls = redis.call('SMEMBERS', KEYS[1])
+            local result = {}
+            for i, url in ipairs(urls) do
+                local longUrl = redis.call('GET', 'short:'..url)
+                if longUrl then
+                    table.insert(result, url)
+                    table.insert(result, longUrl)
+                end
+            end
+            return result
+        `;
+
+        const result = await this.redisClient.eval(script, {
+            keys: [hash],
+            arguments: [],
+        });
+
+        console.log('result', result);
+
+        const pairs: UrlMap[] = [];
+        for (let i = 0; Array.isArray(result) && i < result.length; i += 2) {
+            // @ts-ignore
+            pairs.push({ shortUrl: result[i], longUrl: result[i + 1] });
+        }
+        return pairs;
+    }
+
+    async getTotalAndUniqueVisits(
+        shortUrls: string[],
+    ): Promise<TotalUniqueVisitsObject[]> {
+        const script = `
+            local result = {}
+            for i, shortUrl in ipairs(ARGV) do
+                local total = redis.call('GET', 'short:' .. shortUrl .. ':visits')
+                local unique = redis.call('PFCOUNT', 'short:' .. shortUrl .. ':ips')
+                
+                if total or unique then
+                    table.insert(result, shortUrl)
+                    table.insert(result, total or '0')
+                    table.insert(result, unique or '0')
+                end
+            end
+            return result
+        `;
+        try {
+            const result = await this.redisClient.eval(script, {
+                keys: [],
+                arguments: shortUrls,
+            });
+
+            console.log('result getTotalAndUniqueVisits:', result);
+
+            const stats: TotalUniqueVisitsObject[] = [];
+
+            for (
+                let i = 0;
+                Array.isArray(result) && i < result.length;
+                i += 3
+            ) {
+                stats.push({
+                    shortUrl: result[i] as string,
+
+                    totalVisits: parseInt(result[i + 1] as string, 10),
+
+                    uniqueVisits: parseInt(result[i + 2] as string, 10),
+                });
+            }
+
+            return stats;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException(error);
+        }
     }
 }

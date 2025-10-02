@@ -1,0 +1,21 @@
+meta {
+  name: Shorten URL
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3001/shorten
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  "url": "https://gsfsfsffsfs.co"
+  }
+}

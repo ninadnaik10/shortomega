@@ -16,6 +16,7 @@ import { LoadingButton } from "@mui/lab";
 import { isValidUrl } from "@/utils/isValidUrl";
 
 const FRONT_END_URL = process.env.NEXT_PUBLIC_SHORT_HOST;
+const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 const UrlTextField = () => {
   const [longUrl, setLongUrl] = useAtom(longUrlState);
@@ -24,11 +25,15 @@ const UrlTextField = () => {
   const [loading, setLoading] = useState(false);
 
   const shortenUrl = async () => {
-    // @ts-ignore
-    const res = await axios.post("/api/shorten", {
+    const res = await axios.post(SERVER_URL + "/shorten", {
       url: longUrl,
-    });
-    const hash = res.data.data.hash;
+    },
+  {
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+  });
+    const hash = res.data.hash;
     const shortUrl = `${FRONT_END_URL}/${hash}`;
     console.log(shortUrl);
     setShortUrl(shortUrl);

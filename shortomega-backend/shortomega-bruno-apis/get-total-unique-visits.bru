@@ -1,0 +1,38 @@
+meta {
+  name: get-total-unique-visits
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{host}}/analytics/visits
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  [
+    "e0c97b6",
+    "e26d444",
+    "3290d5a",
+    "f279738",
+    "aea23a6",
+    "b5c9432",
+    "4d8afc9",
+    "06fd01a",
+    "2693380",
+    "8615d91",
+    "3e53812",
+    "0d4a72f",
+    "a743638",
+    "86c84e8",
+    "5f76faa",
+    "294978f",
+    "d34f192"
+  ]
+  
+}

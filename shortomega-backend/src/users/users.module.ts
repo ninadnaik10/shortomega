@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { AppRepositoryRedis } from 'src/app.repository.redis';
 
 @Module({
-  providers: [UsersService, AppRepositoryRedis],
-  exports: [UsersService],
+    providers: [UsersService, AppRepositoryRedis],
+    exports: [UsersService],
 })
 export class UsersModule {}

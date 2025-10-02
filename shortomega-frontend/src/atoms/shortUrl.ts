@@ -1,4 +1,4 @@
-import { atom } from "jotai";
+import { atom } from 'jotai';
 
-const shortUrl = atom("")
+const shortUrl = atom('');
 export default shortUrl;
