@@ -2,13 +2,15 @@
 
 <p align="center">
 
-![GitHub deployments](https://img.shields.io/github/deployments/ninadnaik10/shortomega/production?style=flat&label=deployment&link=https%3A%2F%2Fshortomega.ninadnaik.xyz) ![License](https://img.shields.io/badge/license-GPLv3.0-blue)
+![GitHub deployments](https://img.shields.io/github/deployments/ninadnaik10/shortomega/production?style=flat&label=deployment&link=https%3A%2F%2Fshortomega.ninadnaik.me) ![License](https://img.shields.io/badge/license-GPLv3.0-blue)
 
 ![Next JS](https://img.shields.io/badge/Next-black?style=flat&logo=next.js&logoColor=white) ![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=flat&logo=nestjs&logoColor=white) ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=flat&logo=redis&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)
 
 </p>
 
 A simple and modern URL shortener built with Next.js, NestJS, Redis, and Docker. Create shortened URLs instantly with QR code generation and easy sharing capabilities.
+
+The blog describing the motivation and methods that are implemented for using Redis as a primary database: [tech.ninadnaik.me/using-redis-as-a-primary-database](https://tech.ninadnaik.me/using-redis-as-a-primary-database)
 
 ## Features
 
@@ -18,9 +20,6 @@ A simple and modern URL shortener built with Next.js, NestJS, Redis, and Docker.
 - 📱 QR Code Generation
 - 📋 Copy to Clipboard
 - ⬇️ QR Code Download
-
-### Upcoming Features
-
 - 👤 Personal Accounts for URL Tracking
 - 📊 Analytics Dashboard
 - ⚡ Rate Limiting
@@ -28,15 +27,15 @@ A simple and modern URL shortener built with Next.js, NestJS, Redis, and Docker.
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14 - Server-side rendering and API routes for optimal performance
-- **Backend**: NestJS - Robust and scalable backend API framework
+- **Web Client**: Next.js 14 - Server-side rendering and API routes for optimal performance
+- **Backend Server**: NestJS - Robust and scalable backend API framework
 - **Database**: Redis - High-performance key-value store for URL mappings
 - **Containerization**: Docker - Simplified deployment and development environment
 
 ## Images
 
-![Homepage](./shortomega-frontend/public/screenshots/home-page.png)
-![Resultpage](./shortomega-frontend/public/screenshots/result-page.png)
+![Homepage](./web/public/screenshots/home-page.png)
+![Resultpage](./web/public/screenshots/result-page.png)
 
 ## Prerequisites
 
@@ -64,8 +63,8 @@ docker-compose up --build
 
 The application will be available at:
 
-- Frontend: http://localhost:3001
-- Backend: http://localhost:3000
+- Web Client: http://localhost:3001
+- Backend Server: http://localhost:3000
 
 ### Option 2: Manual Setup
 
@@ -79,7 +78,7 @@ cd shortomega
 2. Setup Backend:
 
 ```bash
-cd shortomega-backend
+cd api
 yarn install
 yarn start:dev
 ```
@@ -87,7 +86,7 @@ yarn start:dev
 3. Setup Frontend:
 
 ```bash
-cd shortomega-frontend
+cd web
 yarn install
 yarn dev
 ```
@@ -98,13 +97,24 @@ yarn dev
 
 ### Frontend (.env)
 
-Rename .example.env to .env
+Rename .example.env to .env and set these environment variables:
+
+```
+SERVER_URL=http://127.0.0.1:3001
+NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_SHORT_HOST=http://localhost:3000
+NEXT_PUBLIC_SERVER_URL=http://localhost:3001
+```
 
 ### Backend (.env)
+
+Rename .example.env to .env and set these environment variables:
 
 ```
 REDIS_HOST=localhost
 REDIS_PORT=6379
+FRONTEND_URL=http://localhost:3000
+JWT_SECRET=<your-jwt-secret-key>
 ```
 
 ## API Endpoints
@@ -115,12 +125,12 @@ REDIS_PORT=6379
 
 ## Project Structure
 
-The project follows a monorepo structure with separate frontend and backend directories:
+The project follows a monorepo structure with separate web client and API server directories:
 
 ```
 shortomega/
-├── frontend/           # Next.js frontend application
-├── backend/           # NestJS backend application
+├── web/           # Next.js frontend application
+├── api/           # NestJS backend application
 ├── docker-compose.yml # Docker composition file
 └── .dockerignore      # Docker ignore rules
 ```
