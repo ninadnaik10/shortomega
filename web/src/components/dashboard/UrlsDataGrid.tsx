@@ -14,8 +14,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LaunchIcon from '@mui/icons-material/Launch';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import PeopleIcon from '@mui/icons-material/People';
-import { DashboardUrl } from '@/hooks/useDashboardData';
 
+const shortUrlHost = process.env.NEXT_PUBLIC_SHORT_HOST;
 interface UrlsDataGridProps {
     urls: any[];
     loading?: boolean;
@@ -26,7 +26,7 @@ export default function UrlsDataGrid({
     loading = false,
 }: UrlsDataGridProps) {
     const handleCopyUrl = async (hash: string) => {
-        const shortUrl = `${window.location.origin}/${hash}`;
+        const shortUrl = `${shortUrlHost}/${hash}`;
         try {
             await navigator.clipboard.writeText(shortUrl);
             console.log('URL copied to clipboard');
@@ -51,7 +51,7 @@ export default function UrlsDataGrid({
                         variant="body2"
                         sx={{ fontFamily: 'monospace' }}
                     >
-                        {window.location.origin}/{params.value}
+                        {shortUrlHost}/{params.value}
                     </Typography>
                     <Tooltip title="Copy short URL">
                         <IconButton
