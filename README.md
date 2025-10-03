@@ -36,6 +36,7 @@ The blog describing the motivation and methods that are implemented for using Re
 
 ![Homepage](./web/public/screenshots/home-page.png)
 ![Resultpage](./web/public/screenshots/result-page.png)
+![Dashboard](./web/public/screenshots/dashboard.png)
 
 ## Prerequisites
 
