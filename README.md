@@ -8,6 +8,9 @@
 
 </p>
 
+> [!NOTE] 
+>The first request to the server may take up to 50 seconds to respond. This delay is due to the free Render instance needing time to spin up from an idle state. Subsequent requests will be much faster.
+
 A simple and modern URL shortener built with Next.js, NestJS, Redis, and Docker. Create shortened URLs instantly with QR code generation and easy sharing capabilities.
 
 The blog describing the motivation and methods that are implemented for using Redis as a primary database: [tech.ninadnaik.me/using-redis-as-a-primary-database](https://tech.ninadnaik.me/using-redis-as-a-primary-database)
